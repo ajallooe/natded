@@ -392,7 +392,18 @@
 	\fi%
 }
 
-\def\statement@jaskb#1#2#3#4#5#6{%
+% work-around for amsmath redefinition compatibility
+\let\ltx@label\label
+
+\newcommand{\labelIfExists}[1]{
+	\ifx#1
+		% no label
+	\else
+		\ltx@label{#1}
+	\fi
+}
+
+\def\statement@jaskb#1#2#3#4#5#6#7{%
 	\stpcl@jaskb{plevel}{\thedepth@jaskb}%
 	\ifnum#1>0\relax%
 		\setle@jaskb{levexpr}{\number\numexpr#1+1\relax}{\frml@jaska{#5}}		\genlevexpr@jaskb{#1}{#4#2}%
@@ -401,19 +412,19 @@
 		\setle@jaskb{levexpr}{0}{\boxnot@jaska[#4#2]{\frml@jaska{#5}}{\getdl@jaskb{blockwidth}{#1}}}%
  	\fi%
 	%#3&...
-	\stepcounter{linecount@jaskb}%
-	\thelinecount@jaskb.&\getle@jaskb{levexpr}{0}&\mbox{#6}\\%
+	\refstepcounter{linecount@jaskb}%
+	\thelinecount@jaskb\labelIfExists{#7}.&\getle@jaskb{levexpr}{0}&\mbox{#6}\\%
 }
 
 \def\cblockmeasure@jaskb#1{%
 	\stepcounter{jdepth@jaskb}%
-	\gdef\hypo@jaskb##1##2##3##4{\jmeasurewidth@jaskb{##3}}%
-	\gdef\have@jaskb##1##2##3##4{\jmeasurewidth@jaskb{##3}}%
+	\gdef\hypo@jaskb##1##2##3##4##5{\jmeasurewidth@jaskb{##3}}%
+	\gdef\have@jaskb##1##2##3##4##5{\jmeasurewidth@jaskb{##3}}%
 	\makdl@jaskb{blockwidth}{\thejdepth@jaskb}%
 	\setdl@jaskb{blockwidth}{\thejdepth@jaskb}{\extrawin@jaskb}%
 	#1%
-	\gdef\hypo@jaskb##1##2##3##4{\measurewidth@jaskb{##3}}%
-	\gdef\have@jaskb##1##2##3##4{\measurewidth@jaskb{##3}}%
+	\gdef\hypo@jaskb##1##2##3##4##5{\measurewidth@jaskb{##3}}%
+	\gdef\have@jaskb##1##2##3##4##5{\measurewidth@jaskb{##3}}%
 	\addtocounter{jdepth@jaskb}{-1}%	
 }
 
@@ -427,20 +438,20 @@
 	\setcl@jaskb{plevel}{\thedepth@jaskb}{0}%
 	\makdl@jaskb{blockwidth}{\thedepth@jaskb}%
 	\setdl@jaskb{blockwidth}{\thedepth@jaskb}{\extrawin@jaskb}%
-	\gdef\hypo@jaskb##1##2##3##4{\measurewidth@jaskb{##3}}%
-	\gdef\have@jaskb##1##2##3##4{\measurewidth@jaskb{##3}}%
+	\gdef\hypo@jaskb##1##2##3##4##5{\measurewidth@jaskb{##3}}%
+	\gdef\have@jaskb##1##2##3##4##5{\measurewidth@jaskb{##3}}%
 	\gdef\cblock@jaskb##1##2{\cblockmeasure@jaskb{##1}}%
 	#1%
-	\gdef\hypo@jaskb##1##2##3##4{\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{\showmark@jaska##3}{##4}}%
-	\gdef\have@jaskb##1##2##3##4{\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{##3}{##4}}%
+	\gdef\hypo@jaskb##1##2##3##4##5{\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{\showmark@jaska##3}{##4}{##5}}%
+	\gdef\have@jaskb##1##2##3##4##5{\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{##3}{##4}{##5}}%
 	\gdef\cblock@jaskb##1##2{\cblockprint@jaskb{##1}{##2}}%
 	#1%
 	\addtocounter{depth@jaskb}{-1}%
 	\addtocounter{jdepth@jaskb}{-1}%
 }
 
-\def\hypo@jaskb#1#2#3#4{}
-\def\have@jaskb#1#2#3#4{}
+\def\hypo@jaskb#1#2#3#4#5{}
+\def\have@jaskb#1#2#3#4#5{}
 
 \def\cblock@jaskb#1#2{\cblockprint@jaskb{#1}{#2}}
 
@@ -453,22 +464,22 @@
 	\makcl@jaskb{plevel}{\thedepth@jaskb}
 	\setcl@jaskb{plevel}{\thedepth@jaskb}{0}
 	\begin{array}{lll}%
-		\gdef\hypo@jaskb##1##2##3##4{\jmeasurewidth@jaskb{##3}\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{\showmark@jaska##3}{##4}}%
-		\gdef\have@jaskb##1##2##3##4{\jmeasurewidth@jaskb{##3}\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{##3}{##4}}%
+		\gdef\hypo@jaskb##1##2##3##4##5{\jmeasurewidth@jaskb{##3}\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{\showmark@jaska##3}{##4}{##5}}%
+		\gdef\have@jaskb##1##2##3##4##5{\jmeasurewidth@jaskb{##3}\statement@jaskb{\thedepth@jaskb}{}{##1}{##2}{##3}{##4}{##5}}%
 		#1%
 	\end{array}%
 }
 
 %%%%% OUTPUT LEVEL
 \gdef\setvstate@jaskc{%
-	\gdef\ndline##1##2##3{%
-		\have@jaskb{##1.}{}{##2}{##3}%
+	\gdef\ndline##1##2##3##4{%
+		\have@jaskb{##1.}{}{##2}{##3}{##4}%
 	}%
 }
 
 \gdef\setystate@jaskc{%
-	\gdef\ndline##1##2##3{%
-		\hypo@jaskb{##1.}{}{##2}{##3}%
+	\gdef\ndline##1##2##3##4{%
+		\hypo@jaskb{##1.}{}{##2}{##3}{##4}%
 	}%
 }
 	
@@ -506,7 +517,7 @@
 
 \gdef\condblock#1#2#3{}
 \gdef\blockcond#1#2#3{}
-\gdef\ndline#1#2#3{}
+\gdef\ndline#1#2#3#4{}
 
 \newcommand{\Jproof}[1]{
 	\setstylej@jaska%
@@ -524,8 +535,8 @@
 	\outer@jaskb{#1}%
 }
 
-\newcommand{\proofline}[2]{
-	\ndline{}{#1}{#2}
+\newcommand{\proofline}[3][]{
+	\ndline{}{#2}{#3}{#1}
 }
 
 \newcommand{\cablk}[3][]{
